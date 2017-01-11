@@ -4,10 +4,10 @@ description: "A blog about lorem ipsum ..."
 baseurl: "" # for test: remove string '/space-jekyll-templa' to ''
 url: "http://ngailapdi.github.io" # for test: remove string 'http://victorvoid.github.io' to '' but in production: 'https:yourusername.githu.io'
 # User settings
-username: ngailapdi
+username: Anh Thai
 user_title: Anh Thai
 email: athai6@gatech.edu
-twitter_username: loremipsum
+twitter_username: ngailapdi
 github_username:  ngailapdi
 gplus_username:  loremipsum
 disqus_username: ngailapdi
