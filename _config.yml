@@ -1,8 +1,8 @@
 # Site settings
-title: Lorem Ipsum - Web Developer
+title: Software Engineer
 description: "A blog about lorem ipsum ..."
 baseurl: "" # for test: remove string '/space-jekyll-templa' to ''
-url: "http://victorvoid.github.io" # for test: remove string 'http://victorvoid.github.io' to '' but in production: 'https:yourusername.githu.io'
+url: "http://ngailapdi.github.io" # for test: remove string 'http://victorvoid.github.io' to '' but in production: 'https:yourusername.githu.io'
 # User settings
 username: ngailapdi
 user_title: Anh Thai
@@ -10,7 +10,7 @@ email: athai6@gatech.edu
 twitter_username: loremipsum
 github_username:  ngailapdi
 gplus_username:  loremipsum
-disqus_username: loremipsum
+disqus_username: ngailapdi
 
 # Build settings
 markdown: kramdown
