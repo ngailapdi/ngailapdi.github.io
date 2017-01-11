@@ -4,11 +4,11 @@ description: "A blog about lorem ipsum ..."
 baseurl: "" # for test: remove string '/space-jekyll-templa' to ''
 url: "http://victorvoid.github.io" # for test: remove string 'http://victorvoid.github.io' to '' but in production: 'https:yourusername.githu.io'
 # User settings
-username: lorem ipsum
-user_title: Lorem Ipsum - FrontEnd
-email: lorem.lorem@ipsum.com
+username: ngailapdi
+user_title: Anh Thai
+email: athai6@gatech.edu
 twitter_username: loremipsum
-github_username:  loremipsum
+github_username:  ngailapdi
 gplus_username:  loremipsum
 disqus_username: loremipsum
 
