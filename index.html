@@ -119,7 +119,7 @@ limitations under the License.
           document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
           document.getElementById('quickstart-account-details').textContent = user.email;
-          document.getElementById('get-info').disabled = false;
+          document.getElementById('affliation').disabled = false;
 
           // [END_EXCLUDE]
         } else {
@@ -128,7 +128,7 @@ limitations under the License.
           document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
           document.getElementById('quickstart-sign-in').textContent = 'Sign in with GitHub';
           document.getElementById('quickstart-account-details').textContent = 'null';
-          document.getElementById('get-info').disabled = true;
+          document.getElementById('affliation').disabled = true;
           // [END_EXCLUDE]
         }
         // [START_EXCLUDE]
@@ -186,11 +186,9 @@ limitations under the License.
             <pre><code id="quickstart-account-details">null</code></pre>
           </div>
           <div>
-            <form id="get-info">
               Affliation:
               <input type="text" id="affliation" name="affliation" value="">
               <button onclick="getInfo()" id="button">Submit</button>
-            </form>
           </div>
         </div>
       </div>
