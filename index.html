@@ -146,9 +146,12 @@ limitations under the License.
         if (document.getElementById('affliation')) {
           var affliation = document.getElementById('affliation').value;
           console.log(document.getElementById('affliation').value);
+          console.log(document.getElementById('affliation').disabled);
+        } else {
+          alert('Please enter affliation');
         };
       } else {
-        console.log('not logged in');
+        alert('Please log in');
       }
     }
   </script>
@@ -187,7 +190,7 @@ limitations under the License.
           </div>
           <div>
               Affliation:
-              <input type="text" id="affliation" name="affliation" value="">
+              <input disabled type="text" id="affliation" name="affliation" value="">
               <button onclick="getInfo()" id="button">Submit</button>
           </div>
         </div>
