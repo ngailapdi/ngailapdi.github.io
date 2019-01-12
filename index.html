@@ -120,12 +120,6 @@ limitations under the License.
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
           document.getElementById('quickstart-account-details').textContent = user.email;
           document.getElementById('get-info').disabled = false;
-          // document.getElementById('button').onclick = function() {
-          //   if (document.getElementById('affliation')) {
-          //     var affliation = document.getElementById('affliation').value;
-          //     console.log('affliation');
-          //   };
-          // }​;​
 
           // [END_EXCLUDE]
         } else {
@@ -147,6 +141,12 @@ limitations under the License.
     window.onload = function() {
       initApp();
     };
+    function getInfo() {
+      if (document.getElementById('affliation')) {
+        var affliation = document.getElementById('affliation').value;
+        console.log('affliation');
+      };
+    }
   </script>
 </head>
 <body>
