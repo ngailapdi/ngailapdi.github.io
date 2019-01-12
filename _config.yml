@@ -47,3 +47,5 @@ projects:
     url: https://github.com/ngailapdi/CaroFun
 # exclude my node related stuff
 exclude: ['package.json', 'src', 'node_modules']
+
+theme: jekyll-theme-slate
