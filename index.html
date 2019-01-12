@@ -156,7 +156,7 @@ limitations under the License.
       }
     }
     function writeUserInfo(user, affliation) {
-      firebase.database().ref('users/' + user.userId).set({
+      firebase.database().ref('users/' + user.uid).set({
         username: user.displayName,
         email: user.email,
         affliation: affliation
