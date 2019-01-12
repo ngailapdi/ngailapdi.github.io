@@ -120,6 +120,8 @@ limitations under the License.
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
           document.getElementById('quickstart-account-details').textContent = user.email;
           document.getElementById('aff').style.visibility = "visible";
+          document.getElementById('userLogIn').style.visibility = "visible";
+
 
           // [END_EXCLUDE]
         } else {
@@ -129,6 +131,8 @@ limitations under the License.
           document.getElementById('quickstart-sign-in').textContent = 'Sign in with GitHub';
           document.getElementById('quickstart-account-details').textContent = 'null';
           document.getElementById('aff').style.visibility = "hidden";
+          document.getElementById('userLogIn').style.visibility = "hidden";
+
           // [END_EXCLUDE]
         }
         // [START_EXCLUDE]
@@ -169,13 +173,6 @@ limitations under the License.
       numlinkclickRef.transaction(function (snapshot) {
           return snapshot + 1;
       });
-      // numlinkclickRef.once('value').then(function(snapshot) {
-      //   console.log(snapshot.val());
-      //   var update = {};
-      //   update['/users/' + userID + '/numlinkclick'] = snapshot.val() + 1;
-      //   console.log(update);
-      //   return firebase.database().ref().update(update);
-      // });
       
     }
   </script>
@@ -208,9 +205,12 @@ limitations under the License.
 
           <!-- Container where we'll display the user details -->
           <div class="quickstart-user-details-container">
-            Firebase sign-in status: <span id="quickstart-sign-in-status">Unknown</span>
-            <div>Firebase auth <code>currentUser</code> object value:</div>
-            <pre><code id="quickstart-account-details">null</code></pre>
+            Sign-in status: <span id="quickstart-sign-in-status">Unknown</span>
+            <div id="userLogIn">
+                <div>Hello</div>
+                <pre><code id="quickstart-account-details">null</code></pre>
+            </div>
+            
           </div>
           <div id="aff">
               Affliation:
