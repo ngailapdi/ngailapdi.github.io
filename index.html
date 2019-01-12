@@ -144,7 +144,9 @@ limitations under the License.
     function getInfo() {
       if (firebase.auth().currentUser){
         if (document.getElementById('affliation')) {
+          var user = firebase.auth().currentUser;
           var affliation = document.getElementById('affliation').value;
+          writeUserInfo(user, affliation);
           console.log(document.getElementById('affliation').value);
         } else {
           alert('Please enter affliation');
@@ -152,6 +154,13 @@ limitations under the License.
       } else {
         alert('Please log in');
       }
+    }
+    function writeUserInfo(user, affliation) {
+      firebase.database().ref('users/' + user.userId).set({
+        username: user.displayName,
+        email: user.email,
+        affliation: affliation
+      });
     }
   </script>
 </head>
