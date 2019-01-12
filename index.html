@@ -147,19 +147,6 @@ limitations under the License.
     window.onload = function() {
       initApp();
     };
-    function getUserInfo() {
-      if (!firebase.auth().currentUser) {
-        // [START createprovider]
-        document.getElementById('get-info').disabled = true;
-      } else {
-        // [START signout]
-        firebase.auth().signOut();
-        // [END signout]
-      }
-      // [START_EXCLUDE]
-      document.getElementById('quickstart-sign-in').disabled = true;
-      // [END_EXCLUDE]
-    }
   </script>
 </head>
 <body>
