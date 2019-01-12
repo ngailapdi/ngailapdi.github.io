@@ -52,7 +52,6 @@ limitations under the License.
     function toggleSignIn() {
       if (!firebase.auth().currentUser) {
         // [START createprovider]
-        console.log(firebase.auth().currentUser)
         var provider = new firebase.auth.GithubAuthProvider();
         // [END createprovider]
         // [START addscopes]
@@ -120,6 +119,14 @@ limitations under the License.
           document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
           document.getElementById('quickstart-account-details').textContent = user.email;
+          document.getElementById('get-info').disabled = false;
+          document.getElementById('button').onclick = function() {
+            if (document.getElementById('affliation')) {
+              var affliation = document.getElementById('affliation').value;
+              console.log('affliation');
+            };
+          }​;​
+
           // [END_EXCLUDE]
         } else {
           // User is signed out.
@@ -127,6 +134,7 @@ limitations under the License.
           document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
           document.getElementById('quickstart-sign-in').textContent = 'Sign in with GitHub';
           document.getElementById('quickstart-account-details').textContent = 'null';
+          document.getElementById('get-info').disabled = true;
           // [END_EXCLUDE]
         }
         // [START_EXCLUDE]
@@ -139,6 +147,19 @@ limitations under the License.
     window.onload = function() {
       initApp();
     };
+    function getUserInfo() {
+      if (!firebase.auth().currentUser) {
+        // [START createprovider]
+        document.getElementById('get-info').disabled = true;
+      } else {
+        // [START signout]
+        firebase.auth().signOut();
+        // [END signout]
+      }
+      // [START_EXCLUDE]
+      document.getElementById('quickstart-sign-in').disabled = true;
+      // [END_EXCLUDE]
+    }
   </script>
 </head>
 <body>
@@ -172,6 +193,13 @@ limitations under the License.
             Firebase sign-in status: <span id="quickstart-sign-in-status">Unknown</span>
             <div>Firebase auth <code>currentUser</code> object value:</div>
             <pre><code id="quickstart-account-details">null</code></pre>
+          </div>
+          <div class="get-info">
+            <form>
+              Affliation:
+              <input type="text" id="affliation" name="affliation" value="">
+              <button onclick="getInfo()" id="button">Submit</button>
+            </form>
           </div>
         </div>
       </div>
