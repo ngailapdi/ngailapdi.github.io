@@ -119,7 +119,7 @@ limitations under the License.
           document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
           document.getElementById('quickstart-account-details').textContent = user.email;
-          document.getElementById('affliation').style.visibility = "visible";
+          document.getElementById('aff').style.visibility = "visible";
 
           // [END_EXCLUDE]
         } else {
@@ -128,7 +128,7 @@ limitations under the License.
           document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
           document.getElementById('quickstart-sign-in').textContent = 'Sign in with GitHub';
           document.getElementById('quickstart-account-details').textContent = 'null';
-          document.getElementById('affliation').style.visibility = "hidden";
+          document.getElementById('aff').style.visibility = "hidden";
           // [END_EXCLUDE]
         }
         // [START_EXCLUDE]
@@ -187,7 +187,7 @@ limitations under the License.
             <div>Firebase auth <code>currentUser</code> object value:</div>
             <pre><code id="quickstart-account-details">null</code></pre>
           </div>
-          <div>
+          <div id="aff">
               Affliation:
               <input type="text" id="affliation" name="affliation" value="">
               <button onclick="getInfo()" id="button">Submit</button>
