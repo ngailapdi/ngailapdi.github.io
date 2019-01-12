@@ -159,8 +159,17 @@ limitations under the License.
       firebase.database().ref('users/' + user.uid).set({
         username: user.displayName,
         email: user.email,
-        affliation: affliation
+        affliation: affliation,
+        numlinkclick: 0
       });
+    }
+    function linkClick() {
+      var userID = firebase.auth().currentUser.uid;
+      var numlinkclick = firebase.database().ref().child('numlinkclick');
+      var update = {};
+      update['/users/' + userID + '/linkclick'] = numlinkclick + 1;
+      console.log(update);
+      return firebase.database().ref().update(update);
     }
   </script>
 </head>
@@ -200,6 +209,9 @@ limitations under the License.
               Affliation:
               <input type="text" id="affliation" name="affliation" value="">
               <button onclick="getInfo()" id="button">Submit</button>
+          </div>
+          <div>
+              <a id="link" onclick="linkClick()" href="url">This is a dead link :)</a>
           </div>
         </div>
       </div>
