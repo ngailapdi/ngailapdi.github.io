@@ -142,10 +142,14 @@ limitations under the License.
       initApp();
     };
     function getInfo() {
-      if (document.getElementById('affliation')) {
-        var affliation = document.getElementById('affliation').value;
-        console.log('affliation');
-      };
+      if (firebase.auth().currentUser){
+        if (document.getElementById('affliation')) {
+          var affliation = document.getElementById('affliation').value;
+          console.log(document.getElementById('affliation').value);
+        };
+      } else {
+        console.log('not logged in');
+      }
     }
   </script>
 </head>
