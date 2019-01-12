@@ -166,8 +166,9 @@ limitations under the License.
     function linkClick() {
       var userID = firebase.auth().currentUser.uid;
       var numlinkclick = firebase.database().ref().child('numlinkclick');
+      console.log(numlinkclick);
       var update = {};
-      update['/users/' + userID + '/linkclick'] = numlinkclick + 1;
+      update['/users/' + userID + '/numlinkclick'] = numlinkclick + 1;
       console.log(update);
       return firebase.database().ref().update(update);
     }
