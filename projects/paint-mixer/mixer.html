@@ -1,0 +1,1253 @@
+
+
+
+<!-- STREAMING_CHUNK:Building the Atelier Pigment Mixing Studio HTML structure... -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATELIER — Subtractive Pigment Mixing Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        studio: {
+                            50: '#F9F8F6',
+                            100: '#F2F0EC',
+                            200: '#E6E3DD',
+                            300: '#D5D1C8',
+                            500: '#78756E',
+                            800: '#262523',
+                            900: '#171615',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* STREAMING_CHUNK:Styling custom scrollbars and range inputs... */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D5D1C8;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #78756E;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #E6E3DD;
+            height: 6px;
+            border-radius: 999px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -5px;
+            background-color: #171615;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            border: 2px solid #F9F8F6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            transition: transform 0.15s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.18);
+        }
+
+        .swatch-transition {
+            transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .paint-sheen {
+            background-image: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 45%, rgba(0,0,0,0.06) 100%);
+        }
+    </style>
+</head>
+<body class="bg-studio-100 text-studio-900 font-sans antialiased selection:bg-studio-900 selection:text-studio-50 min-h-screen flex flex-col">
+
+    <!-- STREAMING_CHUNK:Rendering studio header navigation... -->
+    <header class="border-b border-studio-200 bg-studio-50/80 backdrop-blur-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 rounded-full bg-studio-900 flex items-center justify-center text-studio-50 font-mono text-xs font-semibold tracking-tighter shadow-inner">
+                    KM
+                </div>
+                <div>
+                    <h1 class="text-sm font-semibold tracking-tight text-studio-900 flex items-center gap-2">
+                        ATELIER
+                        <span class="text-[11px] font-mono font-normal px-2 py-0.5 rounded-full bg-studio-200/80 text-studio-800">Kubelka-Munk Engine</span>
+                    </h1>
+                    <p class="text-[11px] text-studio-500 hidden sm:block">38-Band Spectral Subtractive Artist Pigment Simulator</p>
+                </div>
+            </div>
+
+            <!-- Preset Mix Buttons & Engine Mode Toggle -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button onclick="loadExampleMix('greenBlue')" class="text-xs px-2.5 py-1.5 rounded-lg border border-studio-200 bg-white hover:bg-studio-100 text-studio-800 transition flex items-center gap-1.5 shadow-2xs" title="Deep Green (PBk7, PG36) + Primary Blue (PB15:3)">
+                    <span class="w-2 h-2 rounded-full bg-[#093B2C]"></span>
+                    <span class="w-2 h-2 rounded-full bg-[#0047AB] -ml-1"></span>
+                    <span class="hidden md:inline font-medium">Deep Green + Blue</span>
+                    <span class="md:hidden font-medium">Green+Blue</span>
+                </button>
+                <button onclick="loadExampleMix('primaryBrown')" class="text-xs px-2.5 py-1.5 rounded-lg border border-studio-200 bg-white hover:bg-studio-100 text-studio-800 transition flex items-center gap-1.5 shadow-2xs" title="Primary Brown Test: PV19 + PY35 + PB15:3">
+                    <span class="w-2 h-2 rounded-full bg-[#D91E41]"></span>
+                    <span class="w-2 h-2 rounded-full bg-[#F8B800] -ml-1"></span>
+                    <span class="w-2 h-2 rounded-full bg-[#0047AB] -ml-1"></span>
+                    <span class="hidden sm:inline font-medium">Primary Brown (PV19+PY35+PB15:3)</span>
+                    <span class="sm:hidden font-medium">Triad Brown</span>
+                </button>
+
+                <!-- Mixing Algorithm Toggle -->
+                <div class="bg-studio-200/70 p-0.5 rounded-lg flex items-center text-xs font-medium">
+                    <button id="modeKM" onclick="setMixMode('km')" class="px-2.5 py-1 rounded-md bg-white text-studio-900 shadow-2xs transition">
+                        Pigment (K-M)
+                    </button>
+                    <button id="modeRGB" onclick="setMixMode('rgb')" class="px-2.5 py-1 rounded-md text-studio-500 hover:text-studio-900 transition">
+                        Digital (RGB)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- STREAMING_CHUNK:Structuring main two-column workspace... -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- LEFT COLUMN: Artist Palette (4 Columns) -->
+        <section class="lg:col-span-5 xl:col-span-4 bg-studio-50 border border-studio-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-studio-200 pb-3">
+                <div>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-studio-500">Artist Palette</h2>
+                    <p class="text-xs text-studio-500 mt-0.5">Click any paint tube to add to mixing well</p>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="toggleModal('addPaintModal', true)" class="text-xs font-medium px-2.5 py-1.5 rounded-lg bg-studio-900 text-white hover:bg-studio-800 transition flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        Add Paint
+                    </button>
+                    <button onclick="toggleModal('importModal', true)" class="text-xs font-medium px-2.5 py-1.5 rounded-lg border border-studio-300 hover:bg-studio-200/60 text-studio-800 transition" title="Bulk Import JSON / CSV">
+                        Import
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Filter -->
+            <div class="relative">
+                <input id="paletteSearch" type="text" oninput="renderPalette()" placeholder="Filter by name, pigment (e.g. PV19, PB15:3) or hex..." 
+                    class="w-full text-xs bg-white border border-studio-200 rounded-xl px-3 py-2 pl-8 focus:outline-none focus:border-studio-800 transition font-mono">
+                <svg class="w-3.5 h-3.5 text-studio-500 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+
+            <!-- Palette Swatch List -->
+            <div id="paletteList" class="grid grid-cols-1 gap-2 max-h-[520px] overflow-y-auto pr-1">
+                <!-- Rendered dynamically -->
+            </div>
+
+            <div class="pt-2 border-t border-studio-200 flex items-center justify-between text-[11px] text-studio-500">
+                <span id="paletteCount">8 paints loaded</span>
+                <button onclick="resetStarterPalette()" class="hover:text-studio-900 underline">Reset starter palette</button>
+            </div>
+        </section>
+
+        <!-- RIGHT COLUMN: Active Mixing Well & Resulting Swatch Card (8 Columns) -->
+        <section class="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                
+                <!-- Active Mixing Well -->
+                <div class="md:col-span-6 bg-studio-50 border border-studio-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-studio-200 pb-3 mb-3">
+                            <div>
+                                <h2 class="text-xs font-semibold uppercase tracking-wider text-studio-500">Active Mixing Well</h2>
+                                <p class="text-xs text-studio-500 mt-0.5">Adjust parts or scrub ratios in real-time</p>
+                            </div>
+                            <button onclick="clearMixWell()" class="text-xs text-studio-500 hover:text-red-700 transition font-medium">
+                                Clear Well
+                            </button>
+                        </div>
+
+                        <!-- Quick Presets Inside Well -->
+                        <div class="flex flex-wrap items-center gap-1.5 mb-3">
+                            <button onclick="loadExampleMix('greenBlue')" class="text-[11px] px-2 py-1 rounded-lg border border-studio-200 bg-white hover:bg-studio-100 text-studio-800 transition font-medium flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-[#093B2C]"></span>
+                                <span>PG36 + PB15:3</span>
+                            </button>
+                            <button onclick="loadExampleMix('primaryBrown')" class="text-[11px] px-2 py-1 rounded-lg border border-studio-200 bg-white hover:bg-studio-100 text-studio-800 transition font-medium flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-[#D91E41]"></span>
+                                <span>PV19 + PY35 + PB15:3 (Brown)</span>
+                            </button>
+                        </div>
+
+                        <!-- Tinting Weight Toggle -->
+                        <div class="flex items-center justify-between bg-studio-100 border border-studio-200/80 rounded-xl px-3 py-2 mb-3">
+                            <div>
+                                <span class="text-[11px] font-semibold text-studio-800 block">Optical Tinting Weight</span>
+                                <span id="tintingModeDesc" class="text-[10px] text-studio-500">Physical Pigment Strength (PV19/PB15:3 weighted)</span>
+                            </div>
+                            <div class="bg-studio-200/80 p-0.5 rounded-lg flex items-center text-[10px] font-medium shrink-0">
+                                <button id="weightPhysical" onclick="setTintingMode('physical')" class="px-2 py-1 rounded-md bg-white text-studio-900 shadow-2xs transition">
+                                    Real Tube
+                                </button>
+                                <button id="weightEqual" onclick="setTintingMode('equal')" class="px-2 py-1 rounded-md text-studio-500 hover:text-studio-900 transition">
+                                    1:1 Optical
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Ratio Bar Visualizer -->
+                        <div id="ratioDistributionBar" class="h-3 w-full rounded-full overflow-hidden flex bg-studio-200 mb-4 shadow-inner"></div>
+
+                        <!-- Sliders Container -->
+                        <div id="mixWellList" class="space-y-3 max-h-[340px] overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <!-- Quick White Addition -->
+                    <div class="mt-5 pt-3 border-t border-studio-200 flex items-center justify-between gap-2">
+                        <span class="text-[11px] text-studio-500 font-medium">Quick Modifiers:</span>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="quickAddByPigment('PW6')" class="text-[11px] px-2.5 py-1 rounded-lg border border-studio-200 bg-white hover:bg-studio-100 text-studio-800 transition font-medium">
+                                + Titanium White (PW6)
+                            </button>
+                            <button onclick="equalizeParts()" class="text-[11px] px-2.5 py-1 rounded-lg border border-studio-200 bg-white hover:bg-studio-100 text-studio-800 transition font-medium">
+                                1:1 Equal
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resulting Mix Swatch Card -->
+                <div class="md:col-span-6 bg-studio-50 border border-studio-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-xs font-semibold uppercase tracking-wider text-studio-900">Perceived Outcome Swatch</span>
+                                <p class="text-[10px] text-studio-500">Physical Kubelka-Munk Masstone vs. Digital RGB</p>
+                            </div>
+                            <span id="activeMixBadge" class="text-[11px] font-mono px-2 py-0.5 rounded bg-studio-200/80 text-studio-800">Subtractive K-M</span>
+                        </div>
+
+                        <!-- Main Swatch Display -->
+                        <div id="mainSwatchCard" class="relative h-48 w-full rounded-2xl shadow-inner border border-black/10 swatch-transition paint-sheen flex flex-col justify-between p-4 overflow-hidden">
+                            
+                            <div class="flex items-center justify-between gap-2 z-10">
+                                <span id="mixPigmentBadge" class="px-2.5 py-1 rounded-full text-xs font-mono font-medium backdrop-blur-md bg-black/30 text-white border border-white/15 shadow-xs truncate">
+                                    PV19 + PY35 + PB15:3
+                                </span>
+
+                                <button onclick="setMixMode(mixMode === 'km' ? 'rgb' : 'km')" id="comparisonPill" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono backdrop-blur-md bg-black/30 hover:bg-black/45 text-white border border-white/15 transition shrink-0" title="Click to toggle engine">
+                                    <span id="altEngineLabel">Digital RGB:</span>
+                                    <span id="altEngineDot" class="w-3.5 h-3.5 rounded-full border border-white/60 inline-block shadow-2xs"></span>
+                                    <span id="altEngineHex" class="text-[10px] opacity-85">#675E50</span>
+                                </button>
+                            </div>
+
+                            <div class="z-10 flex items-end justify-between">
+                                <div>
+                                    <p id="mixRecipeTitle" class="text-sm font-semibold tracking-tight text-white drop-shadow-xs">
+                                        Primary Red + Cadmium Yellow Medium + Primary Blue
+                                    </p>
+                                    <p id="mixPartsSummary" class="text-xs font-mono text-white/85 drop-shadow-xs">
+                                        Ratio 1 : 1 : 1
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Readouts -->
+                        <div class="grid grid-cols-3 gap-2 mt-3">
+                            <button onclick="copyValue('hexValue')" class="group bg-white border border-studio-200 hover:border-studio-800 rounded-xl p-2 text-left transition">
+                                <div class="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-studio-500">
+                                    <span>HEX</span>
+                                    <span class="opacity-0 group-hover:opacity-100 transition text-studio-800">Copy</span>
+                                </div>
+                                <p id="hexValue" class="font-mono text-xs sm:text-sm font-semibold text-studio-900 mt-0.5">#4C2E21</p>
+                            </button>
+
+                            <button onclick="copyValue('rgbValue')" class="group bg-white border border-studio-200 hover:border-studio-800 rounded-xl p-2 text-left transition">
+                                <div class="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-studio-500">
+                                    <span>RGB</span>
+                                    <span class="opacity-0 group-hover:opacity-100 transition text-studio-800">Copy</span>
+                                </div>
+                                <p id="rgbValue" class="font-mono text-xs sm:text-sm font-semibold text-studio-900 mt-0.5 truncate">76, 46, 33</p>
+                            </button>
+
+                            <button onclick="copyValue('hslValue')" class="group bg-white border border-studio-200 hover:border-studio-800 rounded-xl p-2 text-left transition">
+                                <div class="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-studio-500">
+                                    <span>HSL</span>
+                                    <span class="opacity-0 group-hover:opacity-100 transition text-studio-800">Copy</span>
+                                </div>
+                                <p id="hslValue" class="font-mono text-xs sm:text-sm font-semibold text-studio-900 mt-0.5 truncate">17°, 39%, 21%</p>
+                            </button>
+                        </div>
+
+                        <!-- Tint Strip (+PW6) -->
+                        <div class="mt-3.5">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[11px] font-semibold uppercase tracking-wider text-studio-500">Masstone & Undertone Tint Scale (+PW6)</span>
+                                <span class="text-[10px] font-mono text-studio-500">Click tint to copy hex</span>
+                            </div>
+                            <div id="tintScaleStrip" class="grid grid-cols-5 h-12 rounded-xl overflow-hidden border border-black/10 shadow-2xs"></div>
+                        </div>
+
+                        <!-- Spectral Reflectance Curve -->
+                        <div class="mt-3.5 bg-white border border-studio-200 rounded-xl p-2.5">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[10px] font-semibold uppercase tracking-wider text-studio-500">38-Band Spectral Reflectance R(λ)</span>
+                                <span id="spectralNote" class="text-[10px] font-mono text-studio-500">380nm – 750nm</span>
+                            </div>
+                            <svg id="spectralCurveSvg" viewBox="0 0 380 56" class="w-full h-14 overflow-visible"></svg>
+                            <div class="flex justify-between text-[9px] font-mono text-studio-500 mt-1 px-0.5">
+                                <span>400nm (Violet/Blue)</span>
+                                <span>530nm (Green Valley/Peak)</span>
+                                <span>650nm (Warm Red)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-5 pt-3 border-t border-studio-200 flex flex-wrap items-center gap-2">
+                        <button onclick="saveMixToPalette()" class="flex-1 text-xs font-medium py-2.5 px-3 rounded-xl bg-studio-900 text-white hover:bg-studio-800 transition flex items-center justify-center gap-1.5 shadow-2xs">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                            Save Mix to Palette
+                        </button>
+                        <button onclick="saveMixToHistory()" class="flex-1 text-xs font-medium py-2.5 px-3 rounded-xl border border-studio-300 bg-white hover:bg-studio-100 text-studio-900 transition flex items-center justify-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                            Bookmark Recipe
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Saved History Bar -->
+            <div class="bg-studio-50 border border-studio-200 rounded-2xl p-4 sm:p-5 shadow-xs">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-studio-500">Saved Recipes & Swatch History</h2>
+                        <span id="historyCountBadge" class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-studio-200 text-studio-800">2</span>
+                    </div>
+                    <button onclick="clearHistory()" class="text-xs text-studio-500 hover:text-studio-900 transition">Clear History</button>
+                </div>
+                <div id="swatchHistoryBar" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3"></div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- MODAL: Add Paint -->
+    <div id="addPaintModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-studio-50 border border-studio-200 rounded-2xl max-w-md w-full p-6 shadow-xl">
+            <div class="flex items-center justify-between border-b border-studio-200 pb-3 mb-4">
+                <h3 class="text-sm font-semibold text-studio-900">Add Custom Paint to Palette</h3>
+                <button onclick="toggleModal('addPaintModal', false)" class="text-studio-500 hover:text-studio-900">✕</button>
+            </div>
+            <form onsubmit="handleAddCustomPaint(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-studio-800 mb-1">Paint Name</label>
+                    <input id="customPaintName" type="text" required placeholder="e.g. Phthalo Turquoise" 
+                        class="w-full text-xs bg-white border border-studio-300 rounded-xl px-3 py-2.5 focus:outline-none focus:border-studio-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-studio-800 mb-1">Pigment Code(s)</label>
+                    <input id="customPaintPigments" type="text" required placeholder="e.g. PB15:3, PG36" 
+                        class="w-full text-xs font-mono bg-white border border-studio-300 rounded-xl px-3 py-2.5 focus:outline-none focus:border-studio-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-studio-800 mb-1">Masstone Color (Hex)</label>
+                    <div class="flex items-center gap-2">
+                        <input id="customPaintPicker" type="color" value="#006D5B" oninput="document.getElementById('customPaintHex').value = this.value.toUpperCase()"
+                            class="w-11 h-10 rounded-lg border border-studio-300 cursor-pointer bg-white p-0.5">
+                        <input id="customPaintHex" type="text" required value="#006D5B" pattern="^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                            oninput="syncPickerFromHex(this.value)"
+                            class="flex-1 text-xs font-mono bg-white border border-studio-300 rounded-xl px-3 py-2.5 focus:outline-none focus:border-studio-900 uppercase">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="toggleModal('addPaintModal', false)" class="text-xs px-4 py-2 rounded-xl border border-studio-300 text-studio-800 hover:bg-studio-200/50">Cancel</button>
+                    <button type="submit" class="text-xs px-4 py-2 rounded-xl bg-studio-900 text-white hover:bg-studio-800 font-medium">Add to Palette</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Import Palette -->
+    <div id="importModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-studio-50 border border-studio-200 rounded-2xl max-w-lg w-full p-6 shadow-xl">
+            <div class="flex items-center justify-between border-b border-studio-200 pb-3 mb-4">
+                <div>
+                    <h3 class="text-sm font-semibold text-studio-900">Import User-Supplied Palette</h3>
+                    <p class="text-xs text-studio-500">Paste CSV lines (`Name | Pigments | #Hex`) or a JSON array</p>
+                </div>
+                <button onclick="toggleModal('importModal', false)" class="text-studio-500 hover:text-studio-900">✕</button>
+            </div>
+            <div class="space-y-3">
+                <textarea id="bulkImportText" rows="7" placeholder="Cobalt Teal | PG50 | #008B8B&#10;Alizarin Crimson | PR83 | #6E131D"
+                    class="w-full text-xs font-mono bg-white border border-studio-300 rounded-xl p-3 focus:outline-none focus:border-studio-900"></textarea>
+                <div class="flex items-center justify-between pt-2">
+                    <label class="flex items-center gap-2 text-xs text-studio-800 cursor-pointer">
+                        <input id="replacePaletteCheckbox" type="checkbox" class="rounded border-studio-300 text-studio-900 focus:ring-0">
+                        <span>Replace existing palette</span>
+                    </label>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="toggleModal('importModal', false)" class="text-xs px-4 py-2 rounded-xl border border-studio-300 text-studio-800 hover:bg-studio-200/50">Cancel</button>
+                        <button type="button" onclick="handleBulkImport()" class="text-xs px-4 py-2 rounded-xl bg-studio-900 text-white hover:bg-studio-800 font-medium">Load Palette</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-studio-900 text-studio-50 text-xs font-mono px-4 py-2.5 rounded-xl shadow-lg opacity-0 pointer-events-none transition-all duration-200 translate-y-2">
+        Copied to clipboard
+    </div>
+
+    <script>
+        /* STREAMING_CHUNK:Initializing 38-band spectral engine and state... */
+        const NUM_BANDS = 38; // 380nm to 750nm in 10nm steps
+
+        const BASIS_R = new Float32Array(NUM_BANDS);
+        const BASIS_G = new Float32Array(NUM_BANDS);
+        const BASIS_B = new Float32Array(NUM_BANDS);
+
+        (function initSpectralBasis() {
+            for (let i = 0; i < NUM_BANDS; i++) {
+                const wl = 380 + i * 10;
+                const rCliff = 1.0 / (1.0 + Math.exp(-(wl - 592) / 14));
+                const rViolet = 0.08 * Math.exp(-0.5 * Math.pow((wl - 405) / 22, 2));
+                const r = rCliff + rViolet;
+                const g = Math.exp(-0.5 * Math.pow((wl - 532) / 31, 2));
+                const b = 1.0 / (1.0 + Math.exp((wl - 488) / 15));
+                const sum = r + g + b || 1;
+                BASIS_R[i] = r / sum;
+                BASIS_G[i] = g / sum;
+                BASIS_B[i] = b / sum;
+            }
+        })();
+
+        function srgbToLinear(c) {
+            const v = c / 255;
+            return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        }
+
+        function linearToSrgb(v) {
+            const clamped = Math.max(0, Math.min(1, v));
+            const s = clamped <= 0.0031308 ? 12.92 * clamped : 1.055 * Math.pow(clamped, 1 / 2.4) - 0.055;
+            return Math.round(Math.max(0, Math.min(255, s * 255)));
+        }
+
+        function rgbToReflectance(rLin, gLin, bLin, pigmentCodeStr = '') {
+            const R = new Float32Array(NUM_BANDS);
+            const code = (pigmentCodeStr || '').toUpperCase();
+            const eps = 0.004;
+            const redDominance = Math.max(0, rLin - gLin * 1.15);
+            const isQuinacridoneOrRed = code.includes('PV19') || code.includes('PR122') || code.includes('PR') || redDominance > 0.25;
+
+            for (let i = 0; i < NUM_BANDS; i++) {
+                const wl = 380 + i * 10;
+                let refl = rLin * BASIS_R[i] + gLin * BASIS_G[i] + bLin * BASIS_B[i];
+                if (isQuinacridoneOrRed && redDominance > 0.08) {
+                    const greenBand = Math.exp(-0.5 * Math.pow((wl - 532) / 26, 2));
+                    const suppression = 1.0 - Math.min(0.88, redDominance * 1.05) * greenBand;
+                    refl *= suppression;
+                }
+                R[i] = eps + refl * (0.985 - eps);
+            }
+            return R;
+        }
+
+        function reflectanceToLinearRgb(R) {
+            let mRR = 0, mRG = 0, mRB = 0, mGG = 0, mGB = 0, mBB = 0;
+            let vR = 0, vG = 0, vB = 0;
+            for (let i = 0; i < NUM_BANDS; i++) {
+                const br = BASIS_R[i], bg = BASIS_G[i], bb = BASIS_B[i];
+                mRR += br * br; mRG += br * bg; mRB += br * bb;
+                mGG += bg * bg; mGB += bg * bb; mBB += bb * bb;
+                vR += R[i] * br; vG += R[i] * bg; vB += R[i] * bb;
+            }
+            const det = mRR * (mGG * mBB - mGB * mGB) - mRG * (mRG * mBB - mGB * mRB) + mRB * (mRG * mGB - mGG * mRB);
+            const rLin = (vR * (mGG * mBB - mGB * mGB) - mRG * (vG * mBB - mGB * vB) + mRB * (vG * mGB - mGG * vB)) / det;
+            const gLin = (mRR * (vG * mBB - mGB * vB) - vR * (mRG * mBB - mGB * mRB) + mRB * (mRG * vB - vG * mRB)) / det;
+            const bLin = (mRR * (mGG * vB - vG * mGB) - mRG * (mRG * vB - vG * mRB) + vR * (mRG * mGB - mGG * mRB)) / det;
+            return [rLin, gLin, bLin];
+        }
+
+        let tintingMode = 'physical';
+
+        function getPigmentTintingStrength(pigmentCodeStr) {
+            if (tintingMode === 'equal') return 1.0;
+            const code = (pigmentCodeStr || '').toUpperCase();
+            if (code.includes('PBK7')) return 1.40;
+            if (code.includes('PV19') || code.includes('PR122')) return 1.32;
+            if (code.includes('PG36') || code.includes('PG7')) return 1.28;
+            if (code.includes('PB15')) return 1.18;
+            if (code.includes('PBR7')) return 1.15;
+            if (code.includes('PB29')) return 1.05;
+            if (code.includes('PY35')) return 1.05;
+            if (code.includes('PW6')) return 0.90;
+            return 1.0;
+        }
+
+        function mixPaints(activeItems, mode = 'km') {
+            const emptySpectrum = new Float32Array(NUM_BANDS).fill(0.92);
+            if (!activeItems || activeItems.length === 0) {
+                return { r: 242, g: 240, b: 236, hex: '#F2F0EC', spectrum: emptySpectrum };
+            }
+
+            const totalParts = activeItems.reduce((acc, item) => acc + item.parts, 0);
+            if (totalParts <= 0) {
+                const rgb = hexToRgbObj(activeItems[0].hex);
+                const spec = rgbToReflectance(srgbToLinear(rgb.r), srgbToLinear(rgb.g), srgbToLinear(rgb.b), activeItems[0].pigments);
+                return { ...rgb, spectrum: spec };
+            }
+
+            if (mode === 'rgb') {
+                let rAcc = 0, gAcc = 0, bAcc = 0;
+                activeItems.forEach(item => {
+                    const weight = item.parts / totalParts;
+                    const rgb = hexToRgbObj(item.hex);
+                    rAcc += srgbToLinear(rgb.r) * weight;
+                    gAcc += srgbToLinear(rgb.g) * weight;
+                    bAcc += srgbToLinear(rgb.b) * weight;
+                });
+                const r = linearToSrgb(rAcc);
+                const g = linearToSrgb(gAcc);
+                const b = linearToSrgb(bAcc);
+                const spec = rgbToReflectance(rAcc, gAcc, bAcc, '');
+                return { r, g, b, hex: rgbToHex(r, g, b), spectrum: spec };
+            }
+
+            const ksMix = new Float32Array(NUM_BANDS);
+            let totalWeight = 0;
+
+            activeItems.forEach(item => {
+                if (item.parts <= 0) return;
+                const rgb = hexToRgbObj(item.hex);
+                const strength = getPigmentTintingStrength(item.pigments);
+                const w = item.parts * strength;
+                totalWeight += w;
+
+                const rLin = srgbToLinear(rgb.r);
+                const gLin = srgbToLinear(rgb.g);
+                const bLin = srgbToLinear(rgb.b);
+                const refl = rgbToReflectance(rLin, gLin, bLin, item.pigments);
+
+                for (let i = 0; i < NUM_BANDS; i++) {
+                    const R = refl[i];
+                    const ks = ((1 - R) * (1 - R)) / (2 * R);
+                    ksMix[i] += ks * w;
+                }
+            });
+
+            const Rmix = new Float32Array(NUM_BANDS);
+            for (let i = 0; i < NUM_BANDS; i++) {
+                const ks = ksMix[i] / (totalWeight || 1);
+                Rmix[i] = 1 + ks - Math.sqrt(ks * ks + 2 * ks);
+            }
+
+            const [rLin, gLin, bLin] = reflectanceToLinearRgb(Rmix);
+            const r = linearToSrgb(rLin);
+            const g = linearToSrgb(gLin);
+            const b = linearToSrgb(bLin);
+            return { r, g, b, hex: rgbToHex(r, g, b), spectrum: Rmix };
+        }
+
+        function cleanHex(hex) {
+            let h = String(hex || '').trim().replace(/^#/, '');
+            if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+            if (!/^[0-9A-Fa-f]{6}$/.test(h)) return '#000000';
+            return '#' + h.toUpperCase();
+        }
+
+        function hexToRgbObj(hex) {
+            const h = cleanHex(hex).slice(1);
+            return {
+                r: parseInt(h.slice(0, 2), 16),
+                g: parseInt(h.slice(2, 4), 16),
+                b: parseInt(h.slice(4, 6), 16),
+                hex: '#' + h
+            };
+        }
+
+        function rgbToHex(r, g, b) {
+            const toHex = n => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0').toUpperCase();
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+
+        function rgbToHslString(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h = 0, s = 0, l = (max + min) / 2;
+            if (max !== min) {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return `${Math.round(h * 360)}°, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%`;
+        }
+
+        function getContrastTextClass(r, g, b) {
+            const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+            return yiq >= 150 ? 'text-studio-900' : 'text-white';
+        }
+
+        const STARTER_PALETTE = [
+            { id: 'p1', name: 'Primary Red', pigments: 'PV19', hex: '#D91E41' },
+            { id: 'p2', name: 'Cadmium Yellow Medium', pigments: 'PY35', hex: '#F8B800' },
+            { id: 'p3', name: 'Primary Blue', pigments: 'PB15:3', hex: '#0047AB' },
+            { id: 'p4', name: 'Permanent Deep Green', pigments: 'PBk7, PG36', hex: '#093B2C' },
+            { id: 'p5', name: 'Quinacridone Magenta', pigments: 'PR122', hex: '#B81D73' },
+            { id: 'p6', name: 'Titanium White', pigments: 'PW6', hex: '#F9F9F7' },
+            { id: 'p7', name: 'Burnt Sienna', pigments: 'PBr7', hex: '#7E3517' },
+            { id: 'p8', name: 'Ultramarine Blue', pigments: 'PB29', hex: '#1B2A80' }
+        ];
+
+        let palette = JSON.parse(JSON.stringify(STARTER_PALETTE));
+        
+        let activeMix = [
+            { paintId: 'p1', parts: 1 },
+            { paintId: 'p2', parts: 1 },
+            { paintId: 'p3', parts: 1 }
+        ];
+
+        let mixMode = 'km';
+
+        let savedHistory = [
+            {
+                id: 'h1',
+                title: 'Primary Red + Cadmium Yellow Medium + Primary Blue',
+                pigments: 'PV19 + PY35 + PB15:3',
+                ratioText: '1 : 1 : 1',
+                hex: '#4C2E21',
+                recipe: [
+                    { paintId: 'p1', parts: 1 },
+                    { paintId: 'p2', parts: 1 },
+                    { paintId: 'p3', parts: 1 }
+                ]
+            },
+            {
+                id: 'h2',
+                title: 'Permanent Deep Green + Primary Blue',
+                pigments: 'PBk7, PG36 + PB15:3',
+                ratioText: '1 : 1',
+                hex: '#04384E',
+                recipe: [
+                    { paintId: 'p4', parts: 1 },
+                    { paintId: 'p3', parts: 1 }
+                ]
+            }
+        ];
+
+        function renderAll() {
+            renderPalette();
+            renderMixWell();
+            renderResultingMix();
+            renderHistory();
+        }
+
+        function renderPalette() {
+            const container = document.getElementById('paletteList');
+            const query = (document.getElementById('paletteSearch').value || '').toLowerCase().trim();
+
+            const filtered = palette.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                p.pigments.toLowerCase().includes(query) ||
+                p.hex.toLowerCase().includes(query)
+            );
+
+            document.getElementById('paletteCount').textContent = `${palette.length} paint${palette.length === 1 ? '' : 's'} in palette`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-xs text-studio-500 border border-dashed border-studio-200 rounded-xl">No matching paints found.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(paint => {
+                const inWell = activeMix.find(m => m.paintId === paint.id);
+                return `
+                    <div onclick="addPaintToWell('${paint.id}')" 
+                        class="group cursor-pointer bg-white hover:bg-studio-100/90 border ${inWell ? 'border-studio-900 ring-1 ring-studio-900/10' : 'border-studio-200'} rounded-xl p-2.5 flex items-center justify-between gap-3 transition shadow-2xs">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-9 h-9 rounded-lg shrink-0 border border-black/15 shadow-inner paint-sheen relative" style="background-color: ${paint.hex}">
+                                ${inWell ? `<span class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-studio-900 text-white text-[10px] font-mono flex items-center justify-center shadow">${inWell.parts}</span>` : ''}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-xs font-semibold text-studio-900 truncate">${escapeHtml(paint.name)}</div>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="text-[11px] font-mono text-studio-500 bg-studio-100 px-1.5 py-0.2 rounded">${escapeHtml(paint.pigments)}</span>
+                                    <span class="text-[11px] font-mono text-studio-500">${paint.hex}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <span class="text-[11px] font-medium px-2 py-1 rounded-lg bg-studio-100 group-hover:bg-studio-900 group-hover:text-white text-studio-800 transition">
+                                ${inWell ? '+1 Part' : 'Mix'}
+                            </span>
+                            <button onclick="event.stopPropagation(); removePaintFromPalette('${paint.id}')" 
+                                class="p-1 text-studio-300 hover:text-red-600 transition opacity-0 group-hover:opacity-100" title="Remove">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderMixWell() {
+            const listEl = document.getElementById('mixWellList');
+            const barEl = document.getElementById('ratioDistributionBar');
+
+            activeMix = activeMix.filter(item => palette.some(p => p.id === item.paintId));
+            const totalParts = activeMix.reduce((sum, item) => sum + item.parts, 0);
+
+            if (activeMix.length === 0) {
+                barEl.innerHTML = `<div class="w-full h-full bg-studio-200"></div>`;
+                listEl.innerHTML = `
+                    <div class="text-center py-12 px-4 border border-dashed border-studio-300 rounded-xl bg-white/50">
+                        <p class="text-xs font-medium text-studio-800">Mixing well is empty</p>
+                        <p class="text-[11px] text-studio-500 mt-1">Click paints from the left palette to simulate their mix.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            barEl.innerHTML = activeMix.map(item => {
+                const paint = palette.find(p => p.id === item.paintId);
+                const pct = totalParts > 0 ? (item.parts / totalParts) * 100 : 0;
+                return `<div class="h-full transition-all duration-200" style="width: ${pct}%; background-color: ${paint.hex}" title="${escapeHtml(paint.name)}: ${Math.round(pct)}%"></div>`;
+            }).join('');
+
+            listEl.innerHTML = activeMix.map(item => {
+                const paint = palette.find(p => p.id === item.paintId);
+                const pct = totalParts > 0 ? Math.round((item.parts / totalParts) * 100) : 0;
+
+                return `
+                    <div class="bg-white border border-studio-200 rounded-xl p-3 shadow-2xs">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="w-4 h-4 rounded-md shrink-0 border border-black/15" style="background-color: ${paint.hex}"></span>
+                                <span class="text-xs font-semibold text-studio-900 truncate">${escapeHtml(paint.name)}</span>
+                                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-studio-100 text-studio-500 shrink-0">${escapeHtml(paint.pigments)}</span>
+                            </div>
+                            <button onclick="removeFromWell('${paint.id}')" class="text-studio-500 hover:text-red-600 text-xs p-0.5 transition">✕</button>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center border border-studio-200 rounded-lg overflow-hidden bg-studio-50 shrink-0">
+                                <button onclick="stepParts('${paint.id}', -1)" class="px-2 py-1 text-xs font-mono hover:bg-studio-200 transition">−</button>
+                                <span class="px-2 py-1 text-xs font-mono font-semibold min-w-[3.2rem] text-center bg-white">${item.parts} pt${item.parts === 1 ? '' : 's'}</span>
+                                <button onclick="stepParts('${paint.id}', 1)" class="px-2 py-1 text-xs font-mono hover:bg-studio-200 transition">+</button>
+                            </div>
+                            <input type="range" min="1" max="20" step="1" value="${item.parts}" oninput="updateParts('${paint.id}', this.value)" class="flex-1">
+                            <span class="text-xs font-mono font-medium text-studio-800 w-10 text-right shrink-0">${pct}%</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderResultingMix() {
+            const resolvedItems = activeMix.map(item => {
+                const paint = palette.find(p => p.id === item.paintId);
+                return paint ? { ...paint, parts: item.parts } : null;
+            }).filter(Boolean);
+
+            const mixResult = mixPaints(resolvedItems, mixMode);
+            const altMode = mixMode === 'km' ? 'rgb' : 'km';
+            const altResult = mixPaints(resolvedItems, altMode);
+
+            document.getElementById('mainSwatchCard').style.backgroundColor = mixResult.hex;
+
+            document.getElementById('altEngineLabel').textContent = mixMode === 'km' ? 'Digital RGB:' : 'Pigment K-M:';
+            document.getElementById('altEngineDot').style.backgroundColor = altResult.hex;
+            document.getElementById('altEngineHex').textContent = altResult.hex;
+
+            const uniquePigments = [];
+            resolvedItems.forEach(item => {
+                if (item.parts > 0) uniquePigments.push(item.pigments);
+            });
+            const pigmentFormula = uniquePigments.length > 0 ? uniquePigments.join(' + ') : 'No Pigments Selected';
+            document.getElementById('mixPigmentBadge').textContent = pigmentFormula;
+
+            const totalParts = resolvedItems.reduce((s, i) => s + i.parts, 0);
+            if (resolvedItems.length === 0) {
+                document.getElementById('mixRecipeTitle').textContent = 'Select paints to begin mixing';
+                document.getElementById('mixPartsSummary').textContent = '0 parts';
+            } else {
+                const names = resolvedItems.map(i => i.name).join(' + ');
+                const ratios = resolvedItems.map(i => `${i.parts}`).join(' : ');
+                const pcts = resolvedItems.map(i => `${Math.round((i.parts / totalParts) * 100)}%`).join(' / ');
+                document.getElementById('mixRecipeTitle').textContent = names;
+                document.getElementById('mixPartsSummary').textContent = `Ratio ${ratios} (${pcts})`;
+            }
+
+            document.getElementById('hexValue').textContent = mixResult.hex;
+            document.getElementById('rgbValue').textContent = `${mixResult.r}, ${mixResult.g}, ${mixResult.b}`;
+            document.getElementById('hslValue').textContent = rgbToHslString(mixResult.r, mixResult.g, mixResult.b);
+
+            const tintPercentages = [0, 10, 25, 50, 75];
+            const tintStrip = document.getElementById('tintScaleStrip');
+
+            tintStrip.innerHTML = tintPercentages.map(whitePct => {
+                let tintedColor = mixResult;
+                if (whitePct > 0 && resolvedItems.length > 0) {
+                    const baseWeight = 100 - whitePct;
+                    const whiteWeight = whitePct;
+                    tintedColor = mixPaints([
+                        { hex: mixResult.hex, pigments: pigmentFormula, parts: baseWeight },
+                        { hex: '#F9F9F7', pigments: 'PW6', parts: whiteWeight }
+                    ], mixMode);
+                }
+                const textColor = getContrastTextClass(tintedColor.r, tintedColor.g, tintedColor.b);
+                return `
+                    <button onclick="copyDirectHex('${tintedColor.hex}')" 
+                        class="h-full w-full flex flex-col justify-between p-1.5 text-left transition hover:scale-[1.03] focus:outline-none"
+                        style="background-color: ${tintedColor.hex}" title="Click to copy ${tintedColor.hex}">
+                        <span class="text-[9px] font-mono font-semibold ${textColor} opacity-80">${whitePct === 0 ? 'MASSTONE' : `+${whitePct}% PW6`}</span>
+                        <span class="text-[10px] font-mono font-semibold ${textColor}">${tintedColor.hex}</span>
+                    </button>
+                `;
+            }).join('');
+
+            renderSpectralCurve(mixResult.spectrum, mixResult.hex);
+        }
+
+        function renderSpectralCurve(spectrum, strokeHex) {
+            const svg = document.getElementById('spectralCurveSvg');
+            if (!svg || !spectrum) return;
+
+            const width = 380;
+            const height = 56;
+            const pts = [];
+            for (let i = 0; i < NUM_BANDS; i++) {
+                const x = (i / (NUM_BANDS - 1)) * width;
+                const y = height - Math.max(0.02, Math.min(1, spectrum[i])) * (height - 8) - 4;
+                pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+            }
+
+            const areaPts = `0,${height} ` + pts.join(' ') + ` ${width},${height}`;
+            const greenBandR = Math.round((spectrum[15] || 0) * 100);
+            const redBandR = Math.round((spectrum[27] || 0) * 100);
+            document.getElementById('spectralNote').textContent = `530nm Green: ${greenBandR}% | 650nm Red: ${redBandR}%`;
+
+            svg.innerHTML = `
+                <defs>
+                    <linearGradient id="specGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.22"/>
+                        <stop offset="28%" stop-color="#0284C7" stop-opacity="0.22"/>
+                        <stop offset="45%" stop-color="#16A34A" stop-opacity="0.22"/>
+                        <stop offset="68%" stop-color="#EAB308" stop-opacity="0.22"/>
+                        <stop offset="100%" stop-color="#DC2626" stop-opacity="0.28"/>
+                    </linearGradient>
+                </defs>
+                <line x1="0" y1="14" x2="${width}" y2="14" stroke="#E6E3DD" stroke-dasharray="2,2" stroke-width="1"/>
+                <line x1="0" y1="34" x2="${width}" y2="34" stroke="#E6E3DD" stroke-dasharray="2,2" stroke-width="1"/>
+                <polygon points="${areaPts}" fill="url(#specGrad)" />
+                <polyline fill="none" stroke="${strokeHex}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="${pts.join(' ')}" />
+            `;
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('swatchHistoryBar');
+            document.getElementById('historyCountBadge').textContent = savedHistory.length;
+
+            if (savedHistory.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-4 text-xs text-studio-500 border border-dashed border-studio-200 rounded-xl">No bookmarked mixes yet.</div>`;
+                return;
+            }
+
+            container.innerHTML = savedHistory.map(item => `
+                <div onclick="restoreHistoryRecipe('${item.id}')" 
+                    class="group cursor-pointer bg-white border border-studio-200 hover:border-studio-900 rounded-xl p-2.5 flex items-center gap-3 transition shadow-2xs">
+                    <div class="w-10 h-10 rounded-lg shrink-0 border border-black/15 paint-sheen" style="background-color: ${item.hex}"></div>
+                    <div class="min-w-0 flex-1">
+                        <div class="text-xs font-semibold text-studio-900 truncate">${escapeHtml(item.title)}</div>
+                        <div class="text-[10px] font-mono text-studio-500 truncate">${escapeHtml(item.pigments)}</div>
+                        <div class="flex items-center justify-between mt-0.5">
+                            <span class="text-[10px] font-mono font-semibold text-studio-800">${item.hex}</span>
+                            <span class="text-[10px] font-mono text-studio-500">Ratio ${item.ratioText}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addPaintToWell(paintId) {
+            const existing = activeMix.find(item => item.paintId === paintId);
+            if (existing) {
+                existing.parts = Math.min(20, existing.parts + 1);
+            } else {
+                activeMix.push({ paintId, parts: 1 });
+            }
+            renderAll();
+        }
+
+        function removeFromWell(paintId) {
+            activeMix = activeMix.filter(item => item.paintId !== paintId);
+            renderAll();
+        }
+
+        function updateParts(paintId, newParts) {
+            const item = activeMix.find(m => m.paintId === paintId);
+            if (item) {
+                item.parts = Math.max(1, Math.min(50, parseInt(newParts, 10) || 1));
+                renderMixWell();
+                renderResultingMix();
+                renderPalette();
+            }
+        }
+
+        function stepParts(paintId, delta) {
+            const item = activeMix.find(m => m.paintId === paintId);
+            if (!item) return;
+            const next = item.parts + delta;
+            if (next <= 0) {
+                removeFromWell(paintId);
+            } else {
+                item.parts = Math.min(50, next);
+                renderAll();
+            }
+        }
+
+        function clearMixWell() {
+            activeMix = [];
+            renderAll();
+        }
+
+        function equalizeParts() {
+            activeMix.forEach(item => item.parts = 1);
+            renderAll();
+        }
+
+        function quickAddByPigment(codeFragment) {
+            const paint = palette.find(p => p.pigments.toUpperCase().includes(codeFragment.toUpperCase()));
+            if (paint) {
+                addPaintToWell(paint.id);
+            } else {
+                showToast(`No ${codeFragment} paint in palette`);
+            }
+        }
+
+        function setMixMode(mode) {
+            mixMode = mode;
+            const btnKM = document.getElementById('modeKM');
+            const btnRGB = document.getElementById('modeRGB');
+            const badge = document.getElementById('activeMixBadge');
+
+            if (mode === 'km') {
+                btnKM.className = 'px-2.5 py-1 rounded-md bg-white text-studio-900 shadow-2xs transition';
+                btnRGB.className = 'px-2.5 py-1 rounded-md text-studio-500 hover:text-studio-900 transition';
+                badge.textContent = 'Subtractive K-M';
+            } else {
+                btnRGB.className = 'px-2.5 py-1 rounded-md bg-white text-studio-900 shadow-2xs transition';
+                btnKM.className = 'px-2.5 py-1 rounded-md text-studio-500 hover:text-studio-900 transition';
+                badge.textContent = 'Linear RGB Average';
+            }
+            renderResultingMix();
+        }
+
+        function setTintingMode(mode) {
+            tintingMode = mode;
+            const btnPhys = document.getElementById('weightPhysical');
+            const btnEq = document.getElementById('weightEqual');
+            const desc = document.getElementById('tintingModeDesc');
+
+            if (mode === 'physical') {
+                btnPhys.className = 'px-2 py-1 rounded-md bg-white text-studio-900 shadow-2xs transition';
+                btnEq.className = 'px-2 py-1 rounded-md text-studio-500 hover:text-studio-900 transition';
+                desc.textContent = 'Physical Pigment Strength (PV19/PB15:3 weighted)';
+            } else {
+                btnEq.className = 'px-2 py-1 rounded-md bg-white text-studio-900 shadow-2xs transition';
+                btnPhys.className = 'px-2 py-1 rounded-md text-studio-500 hover:text-studio-900 transition';
+                desc.textContent = '1:1 Equal Optical Weight';
+            }
+            renderResultingMix();
+        }
+
+        function loadExampleMix(preset) {
+            if (preset === 'greenBlue') {
+                const g = palette.find(p => p.pigments.includes('PG36')) || palette[3];
+                const b = palette.find(p => p.pigments.includes('PB15:3')) || palette[2];
+                if (g && b) {
+                    activeMix = [
+                        { paintId: g.id, parts: 1 },
+                        { paintId: b.id, parts: 1 }
+                    ];
+                }
+            } else if (preset === 'primaryBrown') {
+                const r = palette.find(p => p.pigments.includes('PV19')) || palette[0];
+                const y = palette.find(p => p.pigments.includes('PY35')) || palette[1];
+                const b = palette.find(p => p.pigments.includes('PB15:3')) || palette[2];
+                if (r && y && b) {
+                    activeMix = [
+                        { paintId: r.id, parts: 1 },
+                        { paintId: y.id, parts: 1 },
+                        { paintId: b.id, parts: 1 }
+                    ];
+                }
+            }
+            renderAll();
+        }
+
+        function saveMixToPalette() {
+            const resolved = activeMix.map(m => {
+                const p = palette.find(x => x.id === m.paintId);
+                return p ? { ...p, parts: m.parts } : null;
+            }).filter(Boolean);
+
+            if (resolved.length === 0) {
+                showToast('Add paints to the mixing well first');
+                return;
+            }
+
+            const result = mixPaints(resolved, mixMode);
+            const names = resolved.map(r => r.name.split(' ')[0]).join('/');
+            const pigments = Array.from(new Set(resolved.map(r => r.pigments))).join(', ');
+
+            const newPaint = {
+                id: 'custom_' + Date.now(),
+                name: `Mix: ${names}`,
+                pigments: pigments,
+                hex: result.hex
+            };
+
+            palette.unshift(newPaint);
+            renderAll();
+            showToast(`Saved "${newPaint.name}" to Palette`);
+        }
+
+        function saveMixToHistory() {
+            const resolved = activeMix.map(m => {
+                const p = palette.find(x => x.id === m.paintId);
+                return p ? { ...p, parts: m.parts } : null;
+            }).filter(Boolean);
+
+            if (resolved.length === 0) return;
+
+            const result = mixPaints(resolved, mixMode);
+            const entry = {
+                id: 'hist_' + Date.now(),
+                title: resolved.map(r => r.name).join(' + '),
+                pigments: resolved.map(r => r.pigments).join(' + '),
+                ratioText: resolved.map(r => r.parts).join(' : '),
+                hex: result.hex,
+                recipe: JSON.parse(JSON.stringify(activeMix))
+            };
+
+            savedHistory.unshift(entry);
+            renderHistory();
+            showToast(`Bookmarked ${result.hex} recipe`);
+        }
+
+        function restoreHistoryRecipe(histId) {
+            const found = savedHistory.find(h => h.id === histId);
+            if (!found) return;
+            activeMix = JSON.parse(JSON.stringify(found.recipe));
+            renderAll();
+            showToast(`Loaded recipe: ${found.title}`);
+        }
+
+        function clearHistory() {
+            savedHistory = [];
+            renderHistory();
+        }
+
+        function toggleModal(id, show) {
+            const el = document.getElementById(id);
+            if (show) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+            } else {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            }
+        }
+
+        function syncPickerFromHex(val) {
+            if (/^#?[0-9A-Fa-f]{6}$/.test(val.trim())) {
+                document.getElementById('customPaintPicker').value = cleanHex(val);
+            }
+        }
+
+        function handleAddCustomPaint(e) {
+            e.preventDefault();
+            const name = document.getElementById('customPaintName').value.trim();
+            const pigments = document.getElementById('customPaintPigments').value.trim();
+            const hex = cleanHex(document.getElementById('customPaintHex').value);
+
+            const newPaint = {
+                id: 'p_' + Date.now(),
+                name,
+                pigments,
+                hex
+            };
+            palette.unshift(newPaint);
+            toggleModal('addPaintModal', false);
+            e.target.reset();
+            document.getElementById('customPaintHex').value = '#006D5B';
+            document.getElementById('customPaintPicker').value = '#006D5B';
+            renderAll();
+            showToast(`Added ${name}`);
+        }
+
+        function removePaintFromPalette(id) {
+            palette = palette.filter(p => p.id !== id);
+            activeMix = activeMix.filter(m => m.paintId !== id);
+            renderAll();
+        }
+
+        function resetStarterPalette() {
+            palette = JSON.parse(JSON.stringify(STARTER_PALETTE));
+            activeMix = [
+                { paintId: 'p1', parts: 1 },
+                { paintId: 'p2', parts: 1 },
+                { paintId: 'p3', parts: 1 }
+            ];
+            renderAll();
+            showToast('Starter palette restored');
+        }
+
+        function handleBulkImport() {
+            const raw = document.getElementById('bulkImportText').value.trim();
+            if (!raw) return;
+
+            const replace = document.getElementById('replacePaletteCheckbox').checked;
+            const imported = [];
+
+            if (raw.startsWith('[') || raw.startsWith('{')) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    const arr = Array.isArray(parsed) ? parsed : [parsed];
+                    arr.forEach((item, idx) => {
+                        if (item.name && item.hex) {
+                            imported.push({
+                                id: 'imp_' + Date.now() + '_' + idx,
+                                name: String(item.name).trim(),
+                                pigments: String(item.pigments || 'Custom').trim(),
+                                hex: cleanHex(item.hex)
+                            });
+                        }
+                    });
+                } catch (err) {
+                    showToast('Invalid JSON format');
+                    return;
+                }
+            } else {
+                const lines = raw.split(/\r?\n/);
+                lines.forEach((line, idx) => {
+                    const trimmed = line.trim();
+                    if (!trimmed) return;
+                    let parts = trimmed.includes('|') ? trimmed.split('|') : trimmed.split(';');
+                    if (parts.length >= 2) {
+                        const name = parts[0].trim();
+                        const pigments = parts.length >= 3 ? parts[1].trim() : 'Custom';
+                        const hexCandidate = parts[parts.length - 1].trim();
+                        imported.push({
+                            id: 'imp_' + Date.now() + '_' + idx,
+                            name,
+                            pigments,
+                            hex: cleanHex(hexCandidate)
+                        });
+                    }
+                });
+            }
+
+            if (imported.length === 0) {
+                showToast('Could not parse any valid colors');
+                return;
+            }
+
+            if (replace) {
+                palette = imported;
+                activeMix = imported.slice(0, 2).map(p => ({ paintId: p.id, parts: 1 }));
+            } else {
+                palette = [...imported, ...palette];
+            }
+
+            toggleModal('importModal', false);
+            document.getElementById('bulkImportText').value = '';
+            renderAll();
+            showToast(`Imported ${imported.length} paint(s)`);
+        }
+
+        function copyValue(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            copyTextToClipboard(text);
+        }
+
+        function copyDirectHex(hex) {
+            copyTextToClipboard(hex);
+        }
+
+        function copyTextToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(`Copied ${text}`);
+            } catch (err) {
+                showToast('Copy failed');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        let toastTimeout = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0', 'translate-y-2');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 2200);
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        window.onload = function() {
+            renderAll();
+        };
+    </script>
+</body>
+</html>
